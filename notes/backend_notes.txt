@@ -1,0 +1,43 @@
+****************************About Package**********************************************
+___________________________________________________________________________________________
+
+1- Bcrypt -: hashed password
+2- cloudinary -: store image on cloud 
+3-: cookie-parser -: parse cookies
+4-: cors -: connect frontend to backend 
+5-: dotenv-: store secret variable
+6-: express -: it is a framework of node.js and with the help of create an API
+7-: mongoose -: with the help of mongoose connect to the database.
+8-: express-fileupload -: handle to avtar images.
+9-: jsonwebtoken -: generate a token of user
+10-: validator -: This library validates and sanitizes strings only.
+If you're not sure if your input is a string, coerce it using input + ''. Passing anything other than a string will result in an error.
+___________________________________________________________________________________________
+
+****************************** middleware************************************************
+___________________________________________________________________________________________
+app.use(
+  cors({
+    origin: [process.env.FRONTEND_URL, process.env.DASHBOARD_URL],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+//
+cookieParser() ek middleware hai jo Express.js me use hota hai, aur isko cookies ko parse karne ke liye istemal kiya jata hai. Jab server pe request aati hai, toh user ki taraf se kuch cookies bheji jaati hain. cookieParser() un cookies ko readable format me convert karta hai, taaki aap asani se unhe access kar sakein.
+app.use(cookieParser());
+
+convert the json format data 
+app.use(express.json());
+
+//The urlencoded function is used to parse the incoming requests with URL-encoded payloads. It is a built-in middleware function in Express based on a body parser module.
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/temp/",
+  })
+);
+
+___________________________________________________________________________________________
