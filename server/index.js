@@ -7,7 +7,7 @@ import { dbConnection } from "./database/dbConnection.js";
 import cloudinary from "cloudinary";
 import messageRouter from "./routes/message.routes.js";
 import userRouter from "./routes/user.routes.js";
-import bodyParser from "body-parser";
+
 
 const app = express();
 // env configuration
@@ -15,8 +15,7 @@ dotenv.config();
 const PORT = process.env.PORT;
 
 // middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(
   cors({
     origin: [process.env.FRONTEND_URL, process.env.DASHBOARD_URL],
