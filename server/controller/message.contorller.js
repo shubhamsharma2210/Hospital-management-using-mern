@@ -22,3 +22,13 @@ export const sendMessage = catchAsyncError(async(req, res) => {
         console.log("something went wrong in message controller",error)
     }
 })
+
+// get all message
+
+export const getAllMessage = async(req,res) => {
+    const message = await Message.find()
+    res.status(200).json({
+        success:true,
+        message,
+            })
+} 

@@ -1,7 +1,9 @@
 import { User } from "../model/userSchema.model.js";
 import { catchAsyncError } from "../middleware/catchAsyncError.middleware.js";
 import { generateToken } from "../utils/jwtToken.js";
+import clodinary from "cloudinary";
 
+// patient register login
 export const patientRegister = async (req, res) => {
   const {
     firstName,
@@ -62,6 +64,8 @@ export const patientRegister = async (req, res) => {
   }
 };
 
+// patient login
+
 export const logIn = async (req, res) => {
   const { email, password, confirmPassword, role } = req.body;
   if (!email || !password || !confirmPassword || !role) {
@@ -107,6 +111,7 @@ export const logIn = async (req, res) => {
   }
 };
 
+// Admin register controller
 export const adminRegister = async (req, res) => {
   const { firstName, lastName, email, gender, dob, nic, phone, password } =
     req.body;
@@ -150,6 +155,7 @@ export const adminRegister = async (req, res) => {
   });
 };
 
+// get all doctor controller
 export const getAllDoctors = async (req, res) => {
   const doctors = await User.find({ role: "Doctor" });
   res.status(200).json({
@@ -159,10 +165,11 @@ export const getAllDoctors = async (req, res) => {
   });
 };
 
+// get user details controller
 export const getUserDetails = async (req, res, next) => {
-  const user = req.user;
+  const users = req.user;
 
-  if (!user) {
+  if (!users) {
     return res.status(404).json({
       success: false,
       message: "Authenticated user not found",
@@ -171,21 +178,28 @@ export const getUserDetails = async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    user,
+    users,
   });
 };
 
+//admin logout controller
 export const logoutAdmin = (req, res) => {
-  res.clearCookie("adminToken");
-  res.status(200).json({
-    success: true,
-    message: "Admin logged out successfully",
-  });
+  res
+    .cookie("patientToken", "", {
+      httpOnly: true,
+      expires: new Date(Date.now()),
+    })
+    .json({
+      success: true,
+      message: "Admin logout successfully",
+    });
 };
+
+// patient logout controller
 export const patientLogout = catchAsyncError(async (req, res) => {
   // Clear only the admin token from the cookies
   res
-    .cookies("patientToken", "", {
+    .cookie("patientToken", "", {
       httpOnly: true,
       expires: new Date(Date.now()), // Expire the cookie to clear it
     })
@@ -194,3 +208,95 @@ export const patientLogout = catchAsyncError(async (req, res) => {
       message: "Patient logged out successfully",
     });
 });
+
+export const addNewDoctor = catchAsyncError(async (req, res, next) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return next(
+      res.status(400).json({
+        success: false,
+        message: "Doctor Avtar is required",
+      })
+    );
+  }
+  const { docAvatar } = req.files;
+
+
+  const allowedFormats = [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/webp",
+  ];
+  if (!allowedFormats.includes(docAvatar.mimetype)) {
+    return res.status(400).json({
+      success: false,
+      message: "File format is not supported",
+    });
+  }
+
+  const {
+    firstName,
+    lastName,
+    email,
+    gender,
+    dob,
+    nic,
+    doctorDepartment,
+    phone,
+    password,
+  } = req.body;
+  if (
+    !firstName ||
+    !lastName ||
+    !email ||
+    !gender ||
+    !dob ||
+    !nic ||
+    !doctorDepartment ||
+    !phone ||
+    !password
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Please fill the full doctor form",
+    });
+  }
+  const isregistred = await User.findOne({ email });
+  if (isregistred) {
+    return res.status(400).json({
+      success: false,
+      message: "Doctor is already registered",
+    });
+  }
+  const cloudinaryResponse = await clodinary.v2.uploader.upload(
+    docAvatar.tempFilePath
+  );
+  if (!cloudinaryResponse || cloudinaryResponse.error) {
+    console.error(
+      "Cloudinary error",
+      cloudinaryResponse.error || "unknown cloudinary error"
+    );
+  }
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      gender,
+      dob,
+      nic,
+      doctorDepartment,
+      phone,
+      password,
+      role: "Doctor",
+      docAvatar: {
+        public_id: cloudinaryResponse.public_id,
+        url: cloudinaryResponse.secure_url,
+      }
+    })
+    res.status(200).json({
+      success: true,
+      message: "Doctor Registered successfully"
+    })
+});
+
+

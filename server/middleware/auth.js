@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 export const isAdminAuthenticated = catchAsyncError(async (req, res, next) => {
   const token = req.cookies.adminToken;
-  console.log(token)
+  
   if (!token) {
     return next(
       res.status(400).json({
@@ -14,9 +14,9 @@ export const isAdminAuthenticated = catchAsyncError(async (req, res, next) => {
     );
   }
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  console.log(decoded)
+ 
   req.user = await User.findById(decoded.id);
-  console.log(req.user)
+
   if (req.user.role !== "Admin") {
     return next(
       res.status(400).json({
