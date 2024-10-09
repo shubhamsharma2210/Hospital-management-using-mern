@@ -7,6 +7,7 @@ import { dbConnection } from "./database/dbConnection.js";
 import cloudinary from "cloudinary";
 import messageRouter from "./routes/message.routes.js";
 import userRouter from "./routes/user.routes.js";
+import appointmentRouter from './routes/appointment.routes.js'
 import bodyParser from 'body-parser'
 
 
@@ -47,6 +48,7 @@ cloudinary.v2.config({
 // Routes
 app.use("/api/v1/message", messageRouter);
 app.use("/api/v1/user", userRouter);
+app.use('/api/v1/appointment',appointmentRouter )
 
 // listning server
 app.listen(process.env.PORT, () => {
