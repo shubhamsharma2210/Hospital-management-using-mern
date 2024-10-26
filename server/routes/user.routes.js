@@ -7,7 +7,8 @@ import {
   logoutAdmin,
   patientRegister,
   patientLogout,
-  addNewDoctor
+  addNewDoctor,
+  doctorCount
 } from "../controller/userController.controller.js";
 import {isAdminAuthenticated,isPatientAuthenticated} from '../middleware/auth.js'
 
@@ -22,4 +23,5 @@ router.get('/patient/me',isPatientAuthenticated, getUserDetails)
 router.get('/admin/logout', isAdminAuthenticated, logoutAdmin)
 router.get('/patient/logout', isPatientAuthenticated, patientLogout)
 router.post('/doctor/addnew',isAdminAuthenticated, addNewDoctor)
+router.get('/doctor/count' , doctorCount)
 export default router;

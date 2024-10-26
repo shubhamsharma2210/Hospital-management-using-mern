@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Appointment from "./pages/Appointment";
@@ -14,6 +14,7 @@ import { context } from "./main";
 import axios from "axios";
 import Footer from "./components/Footer";
 import AboutUs from "./pages/About";
+import SendAppointmentSuccess from "./components/SendAppointmentSuccess ";
 const App = () => {
   const { isAuthenticated, setIsAuthenticated, setUser } = useContext(context);
   useEffect(() => {
@@ -24,7 +25,7 @@ const App = () => {
           { withCredentials: true }
         );
         setIsAuthenticated(true);
-        setUser(response.data.user);
+        setUser(response.data.users);
       } catch (error) {
         setIsAuthenticated(false);
         setUser({});
@@ -33,6 +34,12 @@ const App = () => {
     };
     fetchUser()
   }, [isAuthenticated]);
+ 
+  setTimeout(() => {
+    if(!isAuthenticated){
+      <Navigate to={'/login'} />
+    }
+  } , 1000)
   return (
     <>
       <Router>
@@ -44,6 +51,8 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/success" element={<SendAppointmentSuccess />} />
+          
         </Routes>
         <Footer />
         <ToastContainer position="top-center" />

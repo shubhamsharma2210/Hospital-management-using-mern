@@ -30,7 +30,7 @@ const Navbar = () => {
     <div>
       <nav className="container">
         <div className="logo">SHUBHCARE</div>
-        <div className={show ? "navLinks showMenu" : "navLinks"}>
+        <div className={show ? "navLinks showmenu" : "navLinks"}>
           <div className="links">
             <Link to={"/"}>Home</Link>
             <Link to={"/appointment"}>Appointment</Link>

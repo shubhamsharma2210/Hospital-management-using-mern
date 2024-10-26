@@ -185,7 +185,7 @@ export const getUserDetails = async (req, res, next) => {
 //admin logout controller
 export const logoutAdmin = (req, res) => {
   res
-    .cookie("patientToken", "", {
+    .cookie("adminToken", "", {
       httpOnly: true,
       expires: new Date(Date.now()),
     })
@@ -209,7 +209,7 @@ export const patientLogout = catchAsyncError(async (req, res) => {
     });
 });
 
-export const addNewDoctor = catchAsyncError(async (req, res, next) => {
+export const addNewDoctor = (async (req, res, next) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return next(
       res.status(400).json({
@@ -300,3 +300,20 @@ export const addNewDoctor = catchAsyncError(async (req, res, next) => {
 });
 
 
+// count doctor 
+
+export const doctorCount = async (req, res) => {
+  try {
+    const count = await User.countDocuments({ role: "Doctor" });
+    res.status(200).json({
+      success: true,
+      count,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to get doctor count",
+    });
+    console.log("Error in doctorCount controller:", error.message);
+  }
+};

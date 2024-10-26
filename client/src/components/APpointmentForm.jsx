@@ -81,7 +81,7 @@ const AppointmentForm = () => {
         }
       );
       toast.success(data.message);
-      navigate("/");
+      navigate("/success");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to submit appointment");
     }
